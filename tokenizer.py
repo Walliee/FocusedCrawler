@@ -17,6 +17,7 @@ def contentTokenizer ( url ):
         punct = set(string.punctuation)
         s = ''.join(x for x in s if x not in punct)
         s = s.lower()
+        s = unicode(s)
         tokens = PunktWordTokenizer().tokenize(s)
         tokens = [w for w in tokens if not w in stopset]
         return tokens

@@ -9,6 +9,8 @@ import mimetypes
 from os.path import splitext, basename
 import priorityCalculator
 import re
+import stemmer
+import tokenizer
 #from bs4 import BeautifulSoup, SoupStrainer
 
 # Extensions to be avoided
@@ -17,6 +19,10 @@ excludedExtensions = set(excludedExtentions)    # Making set for easy membership
 
 errorcount = 0
 query = 'Torsten Suel'  # Initial query for focused crawler
+searchTags = stemmer.stemmer(tokenizer.stringTokenizer(query))  # Stemming and tokenizing search query to avoid duplicate effort
+print "Search tokens : "
+print searchTags
+
 top10urls = gQuery.googleSearch(query)
 
 urls = MyPriorityQueue()    # Queue for storing URLs yet to be visisted
@@ -55,10 +61,11 @@ while not urls.empty() and len(visited) < 1000:     # Crawl till queue empty or 
                 file_ext = file_ext.lower()
                 if(file_ext not in excludedExtensions and disassembled.scheme in ['http', 'https'] and disassembled.fragment == '' ):
                     print "in : " +newurl
-                    priority = priorityCalculator.searchPage(newurl, query)
-                    urls.put(newurl, priority)      # Adding URL to queue with calculated priority
-                    if len(visited) >=1000:
-                        break
+                    if not urls.inQueue(newurl):        # Checking to see if URL has already been queued once
+                        priority = priorityCalculator.searchPage(newurl, searchTags)
+                        urls.put(newurl, priority)      # Adding URL to queue with calculated priority
+                        if len(visited) >=1000:
+                            break
     except:
         print "error 1"
         try:
