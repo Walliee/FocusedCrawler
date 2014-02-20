@@ -15,7 +15,7 @@ url = "http://en.wikipedia.org/wiki/The_Big_Bang_Theory"
 
 def searchPage( url, string):
     tokens = stemmer.stemmer(tokenizer.contentTokenizer(url))
-    #print stemmer.stemmer(tokenizer.stringTokenizer(string))
+    print "Calculating priority for : " + url
     token_set = set(tokens)
     tf = {}
     queryTf = {}
@@ -28,8 +28,10 @@ def searchPage( url, string):
             queryTf[tag] = tf.get(tag)
         else:
             queryTf[tag] = 0
-    #print queryTf        
-    return calcPriority(queryTf)
+    #print queryTf
+    priority = calcPriority(queryTf)
+    #print "Priority for " + url + " - " + priority        
+    return priority
             
     #print queryCount            
         

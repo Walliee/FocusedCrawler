@@ -4,4 +4,8 @@ def stemmer ( array ):
     stemmer = Stemmer.Stemmer('english')
     #result = stemmer.stemWords(array)
     #print result
-    return stemmer.stemWords(array)
+    try:
+        print "Stemming"
+        return stemmer.stemWords(array)
+    except:
+        print "Stemming error"

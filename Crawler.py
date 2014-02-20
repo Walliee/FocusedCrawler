@@ -12,10 +12,10 @@ import re
 #from bs4 import BeautifulSoup, SoupStrainer
 
 
-excludedExtentions = ['.png', '.jpg', '.jpeg', '.pdf', '.mp3', '.wmv', '.svg', '.ogg', '.py']
+excludedExtentions = ['.png', '.jpg', '.jpeg', '.pdf', '.mp3', '.wmv', '.svg', '.ogg', '.ogv', '.py', '.tar.gz', '.ppt', '.zip', '.rar', '.ps']
 excludedExtensions = set(excludedExtentions)
 errorcount = 0
-query = 'armadillo'
+query = 'Torsten Suel'
 top10urls = gQuery.googleSearch(query)
 urls = MyPriorityQueue()
 visited = {}
@@ -24,17 +24,21 @@ for i in range(len(top10urls)):
 
 br = mechanize.Browser()
 newurl = ""    
-
+f = open('visited.txt','w+')
+g = open('queue.txt', 'w+')
 while not urls.empty() and len(visited) < 1000:
     try:
         for item in list(urls.queue):
-            print item
+            g.write(unicode(item) + "\n")
+        g.write("#######################################################\n")
         url = urls.get()
         
         #print urls.qsize()
         match = re.match(r'javascript:+', url)
         if not visited.has_key(url) and match is None:
-            print "adding to visted : " + url
+            print "adding to visited : " + url
+            f.write("adding to visited : " + unicode(url)+"\n")
+            f.flush()
             visited[url] = time.time()
             print len(visited)
             br.open(url, timeout=10.0)
@@ -65,7 +69,8 @@ print len(visited)
 sorted_x = sorted(visited.items(), key=lambda x: x[1])
 print sorted_x
 print errorcount
-
+f.close()
+g.close()
 
 
 
