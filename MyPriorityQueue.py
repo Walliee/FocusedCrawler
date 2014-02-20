@@ -1,5 +1,7 @@
 from Queue import PriorityQueue
 
+# Queue implementation for Priority Queue that keeps track of implementation
+
 class MyPriorityQueue(PriorityQueue):
     def __init__(self):
         PriorityQueue.__init__(self)

@@ -2,17 +2,17 @@ import stemmer
 import tokenizer
 import math
 
+# Core method for calculating priority
 def calcPriority( queryTf ):
     priority = len(queryTf)+1
     for tag in queryTf:
         if queryTf[tag] != 0:
             priority -=1
     return priority
-    
 
 url = "http://en.wikipedia.org/wiki/The_Big_Bang_Theory"
-#string = "cats & Dogs"
 
+# Method for searching URL for query key words and eventually calculating priority based on that
 def searchPage( url, string):
     tokens = stemmer.stemmer(tokenizer.contentTokenizer(url))
     print "Calculating priority for : " + url
@@ -20,15 +20,13 @@ def searchPage( url, string):
     tf = {}
     queryTf = {}
     for word in token_set:
-        tf[word] = float(tokens.count(word)) / len(tokens)
-    #print tokenCount            
+        tf[word] = float(tokens.count(word)) / len(tokens)           
     searchTags = stemmer.stemmer(tokenizer.stringTokenizer(string))
     for tag in searchTags:
         if tf.has_key(tag):
             queryTf[tag] = tf.get(tag)
         else:
             queryTf[tag] = 0
-    #print queryTf
     priority = calcPriority(queryTf)
     #print "Priority for " + url + " - " + priority        
     return priority

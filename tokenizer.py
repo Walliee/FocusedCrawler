@@ -7,6 +7,7 @@ import string
 
 stopset = set(stopwords.words('english'))
 
+# Method for tokenizing URL
 def contentTokenizer ( url ):
     try:
         response = mechanize.urlopen(url)
@@ -22,6 +23,7 @@ def contentTokenizer ( url ):
     except:
         print "url tokenizing error"
 
+# Method for tokenizing query string
 def stringTokenizer ( s ):
     #string = "cat & dog"
     try:
