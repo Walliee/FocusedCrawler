@@ -12,7 +12,7 @@ import re
 #from bs4 import BeautifulSoup, SoupStrainer
 
 # Extensions to be avoided
-excludedExtentions = ['.png', '.jpg', '.jpeg', '.pdf', '.mp3', '.wmv', '.svg', '.ogg', '.ogv', '.py', '.tar.gz', '.ppt', '.zip', '.rar', '.ps']
+excludedExtentions = ['.png', '.jpg', '.jpeg', '.pdf', '.mp3', '.wmv', '.svg', '.ogg', '.ogv', '.py', '.tar.gz', '.gz', '.ppt', '.zip', '.rar', '.ps']
 excludedExtensions = set(excludedExtentions)    # Making set for easy membership test
 
 errorcount = 0
