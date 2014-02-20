@@ -19,12 +19,3 @@ class MyPriorityQueue(PriorityQueue):
         _, _, item = PriorityQueue.get(self, *args, **kwargs)
         return item
     
-a = MyPriorityQueue()
-a.put(unicode("http://cse.poly.edu/~tehila/"), 1)
-a.put(unicode("http://cse.poly.edu/~tehila/"), 1)
-a.put(unicode("http://cse.poly.edu/~tehila/"), 1)
-a.put(unicode("http://cse.poly.edu/~tehila/"), 2)
-
-
-for item in list(a.queue):
-    print item
