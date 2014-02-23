@@ -11,14 +11,15 @@ import priorityCalculator
 import re
 import stemmer
 import tokenizer
+import hashlib
 #from bs4 import BeautifulSoup, SoupStrainer
 
 # Extensions to be avoided
-excludedExtentions = ['.png', '.jpg', '.jpeg', '.pdf', '.mp3', '.wmv', '.svg', '.ogg', '.ogv', '.py', '.tar.gz', '.gz', '.ppt', '.zip', '.rar', '.ps']
+excludedExtentions = ['.png', '.jpg', '.jpeg', '.pdf', '.mp3', '.wmv', '.svg', '.ogg', '.ogv', '.py', '.tar.gz', '.gz', '.ppt', '.zip', '.rar', '.ps', '.ppsx']
 excludedExtensions = set(excludedExtentions)    # Making set for easy membership test
 
 errorcount = 0
-query = 'Torsten Suel'  # Initial query for focused crawler
+query = 'Nasir Memon'  # Initial query for focused crawler
 searchTags = stemmer.stemmer(tokenizer.stringTokenizer(query))  # Stemming and tokenizing search query to avoid duplicate effort
 print "Search tokens : "
 print searchTags
@@ -35,8 +36,10 @@ br = mechanize.Browser()
 newurl = ""    
 f = open('visited.txt','w+')
 g = open('queue.txt', 'w+')
+h = open('error.txt', 'w+')
 
-while not urls.empty() and len(visited) < 1000:     # Crawl till queue empty or target visited count is reached
+
+while not urls.empty() and len(visited) < 100:     # Crawl till queue empty or target visited count is reached
     try:
         for item in list(urls.queue):
             g.write(unicode(item) + "\n")
@@ -52,6 +55,13 @@ while not urls.empty() and len(visited) < 1000:     # Crawl till queue empty or 
             visited[url] = time.time()
             print len(visited)
             br.open(url, timeout=10.0)
+            s = hashlib.sha1()
+            s.update(url)
+            fileloc = "Downloads/" + s.hexdigest() + ".txt"     #downloading html
+            j = open(fileloc, 'w+')
+            j.writelines(br.response().read())
+            j.close()
+            #j.write("###################################################################################")
             for link in br.links():
                 newurl = urlparse.urljoin(link.base_url, link.url)      # Converting relative URLs to Absolute ones
                 newurl = unicode(urlnorm.norm(newurl))      # Normalizing URL
@@ -64,15 +74,21 @@ while not urls.empty() and len(visited) < 1000:     # Crawl till queue empty or 
                     if not urls.inQueue(newurl):        # Checking to see if URL has already been queued once
                         priority = priorityCalculator.searchPage(newurl, searchTags)
                         urls.put(newurl, priority)      # Adding URL to queue with calculated priority
-                        if len(visited) >=1000:
+                        if len(visited) >=100:
                             break
-    except:
-        print "error 1"
+    except mechanize.RobotExclusionError as e:
+        print "mechanize error({0}): {1}".format(e.errno, e.strerror)
         try:
             print unicode(newurl)
             errorcount += 1
+            #h.write(errorcount +" \n ")
+            h.write("Page disallowed by robots.txt  : ")
+            h.write(unicode(newurl) + "\n")
+            h.flush()
         except:
             print "Error error"
+    except:
+        print "other error"
     
     
 print visited
@@ -82,6 +98,8 @@ print sorted_x
 print errorcount
 f.close()
 g.close()
+h.close()
+
 
 
 
