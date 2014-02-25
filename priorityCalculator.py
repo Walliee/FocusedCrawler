@@ -14,20 +14,23 @@ url = "http://en.wikipedia.org/wiki/The_Big_Bang_Theory"
 
 # Method for searching URL for query key words and eventually calculating priority based on that
 def searchPage( url, searchTags):
-    tokens = stemmer.stemmer(tokenizer.contentTokenizer(url))
-    print "Calculating priority for : " + url
-    token_set = set(tokens)
-    tf = {}
-    queryTf = {}
-    for word in token_set:
-        tf[word] = float(tokens.count(word)) / len(tokens)           
-    #searchTags = stemmer.stemmer(tokenizer.stringTokenizer(string))
-    for tag in searchTags:
-        if tf.has_key(tag):
-            queryTf[tag] = tf.get(tag)
-        else:
-            queryTf[tag] = 0
-    priority = calcPriority(queryTf)
+    try:
+        tokens = stemmer.stemmer(tokenizer.contentTokenizer(url))
+        print "Calculating priority for : " + url
+        token_set = set(tokens)
+        tf = {}
+        queryTf = {}
+        for word in token_set:
+            tf[word] = float(tokens.count(word)) / len(tokens)           
+        #searchTags = stemmer.stemmer(tokenizer.stringTokenizer(string))
+        for tag in searchTags:
+            if tf.has_key(tag):
+                queryTf[tag] = tf.get(tag)
+            else:
+                queryTf[tag] = 0
+        priority = calcPriority(queryTf)
+    except:
+        print "Priority calculation error"
     #print "Priority for " + url + " - " + priority        
     return priority
             

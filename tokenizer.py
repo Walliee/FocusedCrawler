@@ -26,7 +26,6 @@ def contentTokenizer ( url ):
 
 # Method for tokenizing query string
 def stringTokenizer ( s ):
-    #string = "cat & dog"
     try:
         punct = set(string.punctuation)
         s = ''.join(x for x in s if x not in punct)

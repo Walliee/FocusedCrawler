@@ -6,25 +6,25 @@ from Queue import PriorityQueue
 class MyPriorityQueue(PriorityQueue):
     def __init__(self):
         PriorityQueue.__init__(self)
-        self.all_items = set()
+        #self.all_items = set()
         self.counter = 0
 
     def put(self, item, priority):
-        if item not in self.all_items:      # Check if item already exists or ever existed in the queue to prevent duplicate effort
+        #if item not in self.all_items:      # Check if item already exists or ever existed in the queue to prevent duplicate effort
             PriorityQueue.put(self, (priority, self.counter, item))
-            self.all_items.add(item)
+            #self.all_items.add(item)
             self.counter += 1
 
     def get(self, *args, **kwargs):
-        _, _, item = PriorityQueue.get(self, *args, **kwargs)
-        return item
+        priority, _, item = PriorityQueue.get(self, *args, **kwargs)
+        return (priority,item) 
     
-    def inQueue(self, item):            # Method to check if item is enqueued or not
-        if item in self.all_items:
-            return True
-        else:
-            return False
-        
+    #def inQueue(self, item):            # Method to check if item is enqueued or not
+    #    if item in self.all_items:
+    #        return True
+    #    else:
+    #       return False
+    
     #def getPriority(self, item):
         
     
