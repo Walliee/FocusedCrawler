@@ -85,7 +85,33 @@ def FileWriteUtil(pri, url):
             f.flush()
 
 urlpool = Queue()
-        
+
+def processPage():
+    while not urls.counter > urlcount:
+        try:
+            link = urlpool.get()
+            newurl = urlparse.urljoin(link.base_url, link.url) # Converting relative URLs to Absolute ones
+            newurl = unicode(urlnorm.norm(newurl)) # Normalizing URL
+            print "out: " + newurl
+            disassembled = urlparse.urlsplit(newurl)
+            filename, file_ext = splitext(basename(disassembled.path)) # Finding file extension for filtering exclusions
+            file_ext = file_ext.lower()
+            if filename == 'index':
+                newurl = newurl[:-len(filename + file_ext)]
+            if (file_ext not in excludedExtensions and disassembled.scheme in ['http', 'https'] and disassembled.fragment == ''):
+                print "in : " + newurl
+                if newurl not in visited: # Checking to see if URL has already been queued once
+                    visited.add(newurl)
+                    if urlContains(newurl, searchTags) > 0:
+                        urls.put(newurl, 1)
+                    else:
+                        priority = priorityCalculator.searchPage(newurl, searchTags)
+                        if priority < len(searchTags) + 1:
+                            urls.put(newurl, priority) # Adding URL to queue with calculated priority
+        except UnicodeEncodeError:
+            print "UnicodeEncodeError"
+        except:
+            print "Invalid URL"
 
 timestart = time.time()
 
@@ -102,29 +128,15 @@ while not urls.empty() and urls.counter <= urlcount:     # Crawl till queue empt
             if not mimetype in ["text/html", "application/xhtml+xml", "application/rss+xml"]:
                 continue
             for link in br.links():
-                try:
-                    newurl = urlparse.urljoin(link.base_url, link.url) # Converting relative URLs to Absolute ones
-                    newurl = unicode(urlnorm.norm(newurl)) # Normalizing URL
-                    #print "out: " + newurl
-                    disassembled = urlparse.urlsplit(newurl)
-                    filename, file_ext = splitext(basename(disassembled.path)) # Finding file extension for filtering exclusions
-                    file_ext = file_ext.lower()
-                    if filename == 'index':
-                        newurl = newurl[:-len(filename + file_ext)]
-                    if (file_ext not in excludedExtensions and disassembled.scheme in ['http', 'https'] and disassembled.fragment == ''):
-                        print "Processing: " + newurl
-                        if newurl not in visited: # Checking to see if URL has already been queued once
-                            visited.add(newurl)
-                            if urlContains(newurl, searchTags) > 0:
-                                urls.put(newurl, 1)
-                            else:
-                                priority = priorityCalculator.searchPage(newurl, searchTags)
-                                if priority < len(searchTags) + 1:
-                                    urls.put(newurl, priority) # Adding URL to queue with calculated priority
-                except UnicodeEncodeError:
-                    print "UnicodeEncodeError"
-                except:
-                    print "Invalid URL"
+                urlpool.put(link)
+            workers=[]
+            for i in range(6):
+                t = threading.Thread(target = processPage)
+                t.start()
+                workers.append(t)
+            
+            for t in workers:
+                t.join()
     except:
         print "other error"
 
